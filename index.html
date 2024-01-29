@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User ID Lookup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        label {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 1em;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+
+            button:hover {
+                background-color: #45a049;
+            }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        /* Add your custom styles here */
+    </style>
+</head>
+<body>
+
+    <h1>User ID Lookup</h1>
+
+    <label for="username">Enter Username: </label>
+    <input type="text" id="username" placeholder="Type username...">
+    <button onclick="getUserID()">Search</button>
+
+    <p id="result">User ID will appear here.</p>
+
+    <script>
+        async function getUserID() {
+            const usernameInput = document.getElementById('username');
+            const resultParagraph = document.getElementById('result');
+
+            const username = usernameInput.value.toLowerCase(); // Convert to lowercase for case-insensitive search
+
+            try {
+                // Make API request
+                const response = await fetch(`https://akatsuki.gg/api/v1/users?p=1&l=100`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                // Parse JSON response
+                const data = await response.json();
+
+                // Log the API response
+                console.log('API Response:', data);
+
+                // Find user by username (case-insensitive)
+                const user = data.users.find(user => user.username.toLowerCase() === username);
+
+                if (user) {
+                    resultParagraph.textContent = `User ID for ${usernameInput.value}: ${user.id}`;
+                } else {
+                    resultParagraph.textContent = `User not found.`;
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                resultParagraph.textContent = `Error fetching data. Please try again. Details: ${error.message}`;
+            }
+        }
+    </script>
+
+</body>
+</html>
